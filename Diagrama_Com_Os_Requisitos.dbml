@@ -1,0 +1,153 @@
+Table Usuarios {
+    id int [pk, increment]
+    nome varchar(100)
+    email varchar(100) [unique]
+    senha varchar(255)
+    telefone varchar(15) [unique]
+    cpf varchar(14) [unique]
+    endereco text
+    data_nascimento date
+    status enum('ativo', 'inativo') [default: "ativo"]
+    tipo_usuario enum('admin', 'comum') [default: "comum"]
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Clientes {
+    id int [pk, increment]
+    nome varchar(100)
+    email varchar(100) [unique]
+    telefone varchar(15)
+    cpf varchar(14) [unique]
+    cnpj varchar(18) [unique]
+    endereco text
+    cidade varchar(50)
+    estado varchar(50)
+    cep varchar(10)
+    data_nascimento date
+    tipo_cliente enum('PF', 'PJ')
+    empresa varchar(100)
+    status enum('ativo', 'inativo') [default: "ativo"]
+    limite_credito decimal(10,2)
+    observacoes text
+    criado_por int
+    atualizado_por int
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Controle_Contatos_Cliente {
+    id int [pk, increment]
+    cliente_id int
+    tipo_contato enum('email', 'telefone', 'whatsapp')
+    descricao varchar(255)
+    responsavel varchar(100)
+    status enum('pendente', 'concluido') [default: "pendente"]
+    data_contato date
+    proximo_contato date
+    observacoes text
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Receitas {
+    id int [pk, increment]
+    cliente_id int
+    descricao varchar(255)
+    valor decimal(10,2)
+    data_recebimento date
+    categoria varchar(50)
+    status enum('pendente', 'recebido') [default: "pendente"]
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Despesas {
+    id int [pk, increment]
+    fornecedor_id int
+    descricao varchar(255)
+    valor decimal(10,2)
+    data_pagamento date
+    categoria varchar(50)
+    status enum('pendente', 'pago') [default: "pendente"]
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Fornecedor {
+    id int [pk, increment]
+    nome varchar(100)
+    email varchar(100) [unique]
+    telefone varchar(15)
+    cnpj varchar(18) [unique]
+    endereco text
+    cidade varchar(50)
+    estado varchar(50)
+    cep varchar(10)
+    status enum('ativo', 'inativo') [default: "ativo"]
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Controle_Banco {
+    id int [pk, increment]
+    nome_banco varchar(100)
+    agencia varchar(10)
+    conta varchar(20)
+    tipo_conta enum('corrente', 'poupanca')
+    saldo decimal(15,2) [default: 0.00]
+    titular varchar(100)
+    status enum('ativo', 'inativo') [default: "ativo"]
+    criado_por int
+    atualizado_por int
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Controle_Cartoes {
+    id int [pk, increment]
+    banco_id int
+    nome_cartao varchar(50)
+    limite decimal(10,2)
+    vencimento date
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Controle_Contas {
+    id int [pk, increment]
+    banco_id int
+    descricao varchar(255)
+    valor decimal(10,2)
+    status enum('pendente', 'pago') [default: "pendente"]
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Table Controle_Pagamentos {
+    id int [pk, increment]
+    conta_id int
+    descricao varchar(255)
+    valor decimal(10,2)
+    data_pagamento date
+    status enum('pendente', 'pago') [default: "pendente"]
+    metodo_pagamento enum('dinheiro', 'cartao', 'transferencia')
+    observacoes text
+    criado_por int
+    atualizado_por int
+    created_at timestamp [default: "now()"]
+    updated_at timestamp [default: "now()"]
+}
+
+Ref: Clientes.criado_por > Usuarios.id
+Ref: Clientes.atualizado_por > Usuarios.id
+Ref: Controle_Contatos_Cliente.cliente_id > Clientes.id
+Ref: Receitas.cliente_id > Clientes.id
+Ref: Despesas.fornecedor_id > Fornecedor.id
+Ref: Controle_Banco.criado_por > Usuarios.id
+Ref: Controle_Banco.atualizado_por > Usuarios.id
+Ref: Controle_Cartoes.banco_id > Controle_Banco.id
+Ref: Controle_Contas.banco_id > Controle_Banco.id
+Ref: Controle_Pagamentos.conta_id > Controle_Contas.id
+Ref: Controle_Pagamentos.criado_por > Usuarios.id
+Ref: Controle_Pagamentos.atualizado_por > Usuarios.id
